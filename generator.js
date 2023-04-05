@@ -1,13 +1,11 @@
-let mazeSize = 5;
+var mazeSize;
 var holder, sizeInput;
+var cellPixelSize;
 var sets = {};
 window.onload = () => {
     holder = document.getElementById("holder");
-    
     sizeInput = document.getElementById("mazeSizeInput");
-    
     document.getElementById("step").addEventListener("click", Start);
-    console.log("script started")
 }
 
 // starts maze generation
@@ -16,20 +14,12 @@ function Start(){
     mazeSize = sizeInput.value;
     sets = {};
     maze = null;
-    // removes all cells from holder
-    while(holder.firstChild){
-        holder.removeChild(holder.firstChild);
-    }
     GenMazeArr();
     GenMazeDisplay();
-    UpdatePageMaze();
-    holder.style.gridTemplateRows = `repeat(${mazeSize},1fr)`;
-    holder.style.gridTemplateColumns = `repeat(${mazeSize},1fr)`;
-
     while(!BreakWalls()){
         continue;
     }
-    UpdatePageMaze();
+    Render();
 }
 
 // creates the cell array and the set dictionary
@@ -87,34 +77,16 @@ function BreakWalls(){
             nX++;
             break;
     }
-    if(x == nX && y == nY){return;}
+    if(nX == x && nY == y){return false;}
     DeleteSet(maze[y][x].set,maze[nY][nX].set);
     return false;
 }
 
 // creates all maze cell html elements
 function GenMazeDisplay(){
-    for(let i = 0; i < mazeSize**2; i++){
-        let square = document.createElement("div");
-        square.classList.add("square");
-        square.innerHTML = maze[Math.floor(i/mazeSize)][i %mazeSize].set;
-        holder.appendChild(square);
-    }
-}
-
-// updates all cells styles
-function UpdatePageMaze(){
-    let cells = Array.from(document.getElementsByClassName("square"));
-    for(let i = 0; i < mazeSize**2; i++){
-        let y = Math.floor(i/mazeSize);
-        let x = i % mazeSize;
-        cells[i].classList = ["square"];
-        if(maze[y][x].top){cells[i].classList.add("line-top");}
-        if(maze[y][x].bottom){cells[i].classList.add("line-bottom");}
-        if(maze[y][x].left){cells[i].classList.add("line-left");}
-        if(maze[y][x].right){cells[i].classList.add("line-right");}
-    }
-
+    cellPixelSize = (holder.width / mazeSize);
+    let ctx = holder.getContext("2d");
+    ctx.clearRect(0,0,holder.width,holder.height);
 }
 
 // returns all available directions for a given cell
@@ -138,13 +110,43 @@ function AvailableDirections(x,y){
 // changes all cells sets for another
 function DeleteSet(keptSet,delSet){
     sets[delSet].forEach(element => {
-        sets[keptSet].push(element);
         element.set = keptSet;
-
     });
+    sets[keptSet] = sets[keptSet].concat(sets[delSet]);
     delete sets[delSet];
 }
 
+function Render(){
+    let ctx = holder.getContext("2d");
+    for(let y = 0; y < mazeSize; y++){
+        for(let x = 0; x < mazeSize; x++){
+            if(maze[y][x].top){
+                ctx.beginPath();
+                ctx.moveTo(x * cellPixelSize, y * cellPixelSize);
+                ctx.lineTo((x + 1) * cellPixelSize, y * cellPixelSize);
+                ctx.stroke();
+            }
+            if(maze[y][x].bottom){
+                ctx.beginPath();
+                ctx.moveTo(x * cellPixelSize, (y + 1) * cellPixelSize);
+                ctx.lineTo((x + 1) * cellPixelSize, (y + 1) * cellPixelSize);
+                ctx.stroke();
+            }
+            if(maze[y][x].left){
+                ctx.beginPath();
+                ctx.moveTo(x * cellPixelSize, y * cellPixelSize);
+                ctx.lineTo(x * cellPixelSize, (y + 1) * cellPixelSize);
+                ctx.stroke();
+            }
+            if(maze[y][x].right){
+                ctx.beginPath();
+                ctx.moveTo((x + 1) * cellPixelSize, y * cellPixelSize);
+                ctx.lineTo((x + 1) * cellPixelSize, (y + 1) * cellPixelSize);
+                ctx.stroke();
+            }
+        }
+    }
+}
 // maze cell data class
 class mazeCell{
     constructor(x,y){
