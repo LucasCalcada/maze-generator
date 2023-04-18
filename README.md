@@ -8,6 +8,8 @@ The generator can be used by simply typing the maze size in the input field and 
 **Attention!!!** The maximum maze size can vary according to your device specs. High maze sizes usually lag the web browser
 ![Usage Video](assets/usage.gif)
 # Todo:
-* Create a way to export the maze into a file to be later used in future projects
-* UI Improvements
-* Optimizations
+- [ ] Functionality Improvements
+  - [x] Turning the generator in its on separate module
+  - [ ] Add a option to seed the generation
+  - [ ] Make generation faster for higher maze sizes
+  - [ ] Button to save a maze screenshot
