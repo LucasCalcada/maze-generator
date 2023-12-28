@@ -4,9 +4,9 @@ class Maze{
         this.maze = [];
         this.size = size;
         let i = 0;
-        for(let x = 0; x < size; x++){
+        for(let y = 0; y < size; y++){
             let row = new Array();
-            for(let y = 0; y < size; y++){
+            for(let x = 0; x < size; x++){
                 let cell = new Cell(x,y,i);
                 row.push(cell);
                 this.sets[i] = [cell];

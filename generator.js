@@ -1,50 +1,53 @@
 import Maze from "./maze.js";
 var mazeSize;
 var holder, sizeInput;
+var canvasCtx;
+var cellPixelSize;
+const LINE_WIDTH = 10;
+
+const wallCorners = {
+    "top": [0,0,1,0],
+    "bottom": [0,1,1,1],
+    "right": [1,0,1,1],
+    "left": [0,0,0,1]
+}
 
 window.onload = () => {
     holder = document.getElementById("holder");
+    canvasCtx = holder.getContext("2d");
     sizeInput = document.getElementById("mazeSizeInput");
     document.getElementById("step").addEventListener("click", Generate);
 }
 
-// starts maze generation
+// Starts maze generation
 function Generate(){
     mazeSize = sizeInput.value;
     let mazeObj = new Maze(mazeSize);
     Render(mazeObj.maze);
 }
 
+// Render maze on web page
 function Render(maze){
-    let ctx = holder.getContext("2d");
-    let cellPixelSize = (holder.width / mazeSize);
-    ctx.clearRect(0,0,holder.width,holder.height);
-    for(let y = 0; y < mazeSize; y++){
-        for(let x = 0; x < mazeSize; x++){
-            if(maze[y][x].walls["top"]){
-                ctx.beginPath();
-                ctx.moveTo(x * cellPixelSize, y * cellPixelSize);
-                ctx.lineTo((x + 1) * cellPixelSize, y * cellPixelSize);
-                ctx.stroke();
-            }
-            if(maze[y][x].walls["bottom"]){
-                ctx.beginPath();
-                ctx.moveTo(x * cellPixelSize, (y + 1) * cellPixelSize);
-                ctx.lineTo((x + 1) * cellPixelSize, (y + 1) * cellPixelSize);
-                ctx.stroke();
-            }
-            if(maze[y][x].walls["left"]){
-                ctx.beginPath();
-                ctx.moveTo(x * cellPixelSize, y * cellPixelSize);
-                ctx.lineTo(x * cellPixelSize, (y + 1) * cellPixelSize);
-                ctx.stroke();
-            }
-            if(maze[y][x].walls["right"]){
-                ctx.beginPath();
-                ctx.moveTo((x + 1) * cellPixelSize, y * cellPixelSize);
-                ctx.lineTo((x + 1) * cellPixelSize, (y + 1) * cellPixelSize);
-                ctx.stroke();
-            }
-        }
-    }
+    cellPixelSize = (holder.width / mazeSize);
+    canvasCtx.clearRect(0,0,holder.width,holder.height);
+    // Flattens 2D array
+    maze = [].concat(...maze);
+    maze.forEach(cell => {
+        // Draws line if wall exists
+        Object.keys(cell.walls).forEach(wall => {
+            if(cell.walls[wall]) drawLine(cell.x,cell.y,wall);
+        });
+    });
+}
+function drawLine(x,y,side){
+    let fromX = x + wallCorners[side][0];
+    let fromY = y + wallCorners[side][1];
+    let toX = x + wallCorners[side][2];
+    let toY = y + wallCorners[side][3];
+
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(fromX * cellPixelSize, fromY * cellPixelSize);
+    canvasCtx.lineTo(toX * cellPixelSize, toY * cellPixelSize);
+    canvasCtx.lineWidth = LINE_WIDTH;
+    canvasCtx.stroke();
 }
