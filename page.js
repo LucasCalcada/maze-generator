@@ -1,4 +1,4 @@
-import Maze from "./maze.js";
+import Maze from "./mazeGenerator.js";
 var mazeSize;
 var holder, sizeInput;
 var canvasCtx;

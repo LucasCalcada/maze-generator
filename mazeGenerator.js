@@ -58,18 +58,21 @@ class Maze{
     AvailableDirections(x,y){
         let dirs = [];
         if(x > 0){
-            if(this.maze[y][x].set != this.maze[y][x - 1].set){dirs.push("left");}
+            if(this.CanBreak(x,y,x-1,y)) dirs.push("left");
         }
         if(x < this.size - 1){
-            if(this.maze[y][x].set != this.maze[y][x + 1].set){dirs.push("right");}
+            if(this.CanBreak(x,y,x+1,y)) dirs.push("right");
         }
         if(y > 0){
-            if(this.maze[y][x].set != this.maze[y - 1][x].set){dirs.push("up");}
+            if(this.CanBreak(x,y,x,y-1)) dirs.push("up");
         }
         if(y < this.size - 1){
-            if(this.maze[y][x].set != this.maze[y + 1][x].set){dirs.push("down");}
+            if(this.CanBreak(x,y,x,y+1)) dirs.push("down");
         }
         return dirs;
+    }
+    CanBreak(x,y,nX,nY){
+        return this.maze[y][x].set != this.maze[nY][nX].set
     }
     DeleteSet(keptSet,delSet){
         this.sets[delSet].forEach((element,i) => {
