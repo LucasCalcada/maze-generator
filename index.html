@@ -6,11 +6,12 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <canvas id="holder" width="1280" height="1280"></canvas>
         <div class="controls">
             <p>Maze Size:</p>
-            <input type="number" min="3" value="3" id="mazeSizeInput"></input>
+            <input type="number" min="3" value="3" id="mazeWidthInput"></input>
+            <input type="number" min="3" value="3" id="mazeHeightInput"></input>
             <button type="button" id="step">Generate</button>
         </div>
+        <canvas id="holder" width="1280" height="1280"></canvas>
     </body>
 </html>

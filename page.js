@@ -1,5 +1,5 @@
 import Maze from "./mazeGenerator.js";
-var mazeSize;
+var widthInput, heightInput;
 var holder, sizeInput;
 var canvasCtx;
 var cellPixelSize;
@@ -15,20 +15,22 @@ const wallCorners = {
 window.onload = () => {
     holder = document.getElementById("holder");
     canvasCtx = holder.getContext("2d");
-    sizeInput = document.getElementById("mazeSizeInput");
+    widthInput = document.getElementById("mazeWidthInput");
+    heightInput = document.getElementById("mazeHeightInput");
     document.getElementById("step").addEventListener("click", Generate);
 }
 
 // Starts maze generation
 function Generate(){
-    mazeSize = sizeInput.value;
-    let mazeObj = new Maze(mazeSize);
+    let mazeWidth = widthInput.value;
+    let mazeHeight = heightInput.value;
+    let mazeObj = new Maze(mazeWidth, mazeHeight);
     Render(mazeObj.maze);
 }
 
 // Render maze on web page
 function Render(maze){
-    cellPixelSize = (holder.width / mazeSize);
+    cellPixelSize = 20;
     canvasCtx.clearRect(0,0,holder.width,holder.height);
     // Flattens 2D array
     maze = [].concat(...maze);
