@@ -1,13 +1,13 @@
 class Maze{
-    constructor(sizeX, sizeY){
+    constructor(width, height){
         this.sets = {};
         this.maze = [];
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+        this.width = width;
+        this.height = height;
         let i = 0;
-        for(let y = 0; y < sizeY; y++){
+        for(let y = 0; y < this.height; y++){
             let row = new Array();
-            for(let x = 0; x < sizeX; x++){
+            for(let x = 0; x < this.width; x++){
                 let cell = new Cell(x,y,i);
                 row.push(cell);
                 this.sets[i] = [cell];
@@ -61,13 +61,13 @@ class Maze{
         if(x > 0){
             if(this.CanBreak(x,y,x-1,y)) dirs.push("left");
         }
-        if(x < this.sizeX - 1){
+        if(x < this.width - 1){
             if(this.CanBreak(x,y,x+1,y)) dirs.push("right");
         }
         if(y > 0){
             if(this.CanBreak(x,y,x,y-1)) dirs.push("up");
         }
-        if(y < this.sizeY - 1){
+        if(y < this.height - 1){
             if(this.CanBreak(x,y,x,y+1)) dirs.push("down");
         }
         return dirs;

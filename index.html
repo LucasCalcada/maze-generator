@@ -1,6 +1,7 @@
 <html>
     <head>
         <script type="module" src="mazeGenerator.js"></script>
+        <script type="module" src="mazeToSvg.js"></script>
         <script type="module" src="page.js"></script>
         <title> Maze Generator </title>
         <link rel="stylesheet" href="style.css">
@@ -12,6 +13,6 @@
             <input type="number" min="3" value="3" id="mazeHeightInput"></input>
             <button type="button" id="step">Generate</button>
         </div>
-        <canvas id="holder" width="1280" height="1280"></canvas>
+        <div id="holder" width="1280" height="1280"></div>
     </body>
 </html>

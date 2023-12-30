@@ -1,4 +1,5 @@
 import Maze from "./mazeGenerator.js";
+import parseMaze from "./mazeToSvg.js";
 var widthInput, heightInput;
 var holder, sizeInput;
 var canvasCtx;
@@ -14,7 +15,6 @@ const wallCorners = {
 
 window.onload = () => {
     holder = document.getElementById("holder");
-    canvasCtx = holder.getContext("2d");
     widthInput = document.getElementById("mazeWidthInput");
     heightInput = document.getElementById("mazeHeightInput");
     document.getElementById("step").addEventListener("click", Generate);
@@ -25,31 +25,11 @@ function Generate(){
     let mazeWidth = widthInput.value;
     let mazeHeight = heightInput.value;
     let mazeObj = new Maze(mazeWidth, mazeHeight);
-    Render(mazeObj.maze);
+    let mazeSvg = parseMaze(mazeObj);
+    UpdateDisplay(mazeSvg);
 }
 
-// Render maze on web page
-function Render(maze){
-    cellPixelSize = 20;
-    canvasCtx.clearRect(0,0,holder.width,holder.height);
-    // Flattens 2D array
-    maze = [].concat(...maze);
-    maze.forEach(cell => {
-        // Draws line if wall exists
-        Object.keys(cell.walls).forEach(wall => {
-            if(cell.walls[wall]) drawLine(cell.x,cell.y,wall);
-        });
-    });
-}
-function drawLine(x,y,side){
-    let fromX = x + wallCorners[side][0];
-    let fromY = y + wallCorners[side][1];
-    let toX = x + wallCorners[side][2];
-    let toY = y + wallCorners[side][3];
-
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(fromX * cellPixelSize, fromY * cellPixelSize);
-    canvasCtx.lineTo(toX * cellPixelSize, toY * cellPixelSize);
-    canvasCtx.lineWidth = LINE_WIDTH;
-    canvasCtx.stroke();
+function UpdateDisplay(svg){
+    holder.textContent = '';
+    holder.appendChild(svg);
 }
