@@ -1,5 +1,49 @@
+const Directions = {
+    "top": {
+        "deltaX": 0,
+        "deltaY": -1,
+        "opposite": "bottom"
+    },
+    "bottom": {
+        "deltaX": 0,
+        "deltaY": 1,
+        "opposite": "top"
+    },
+    "left": {
+        "deltaX": -1,
+        "deltaY": 0,
+        "opposite": "right"
+    },
+    "right": {
+        "deltaX": 1,
+        "deltaY": 0,
+        "opposite": "left"
+    }
+}
+class Cell{
+    constructor(x,y,set){
+        this.x = x;
+        this.y = y;
+        this.set = set;
+        this.choosable = true;
+        this.walls = {
+            "top": true,
+            "bottom": true,
+            "left": true,
+            "right": true
+        }
+        this.sides = [];
+    }
+    UpdateSides(mazeWidth,mazeHeight){
+        if(this.x > 0) this.sides.push("left");
+        if(this.x < mazeWidth - 1) this.sides.push("right");
+        if(this.y > 0) this.sides.push("top");
+        if(this.y < mazeHeight - 1) this.sides.push("bottom");
+    }
+}
 class Maze{
     constructor(width, height){
+        let startTime = Date.now();
         this.sets = {};
         this.maze = [];
         this.width = width;
@@ -9,6 +53,7 @@ class Maze{
             let row = new Array();
             for(let x = 0; x < this.width; x++){
                 let cell = new Cell(x,y,i);
+                cell.UpdateSides(this.width,this.height)
                 row.push(cell);
                 this.sets[i] = [cell];
                 i++;
@@ -18,84 +63,56 @@ class Maze{
         while(Object.keys(this.sets).length > 1){
             this.BreakWall();
         }
+        console.log("Time: ", Date.now() - startTime);
+    }
+    CellFromDir(cell,dir){
+        let deltaX = Directions[dir]["deltaX"];
+        let deltaY = Directions[dir]["deltaY"];
+        return this.maze[cell.y + deltaY][cell.x + deltaX];
     }
     BreakWall(){
         let chosenKey = RandomChoice(Object.keys(this.sets));
-        let chosenSet = this.sets[chosenKey]// chooses a random set
-        let chosenCell = RandomChoice(chosenSet); // chooses random cell from set
-        // get cell position
+        let chosenSet = this.sets[chosenKey]; // Chooses a random set
+        chosenSet = chosenSet.filter(cell => cell.choosable);
+        let chosenCell = RandomChoice(chosenSet); // Chooses random cell from set
+
+        // Get cell position
         let x = chosenCell.x;
         let y = chosenCell.y;
-        let directions = this.AvailableDirections(x,y);
-        if(directions.length == 0){return;}
-        let dir = RandomChoice(directions); // chooses random direction
-        let nX = x;
-        let nY = y;
-        switch(dir){
-            case "up":
-                this.maze[y][x].walls["top"]= false;
-                this.maze[y - 1][x].walls["bottom"]= false;
-                nY--;
-                break;
-            case "down":
-                this.maze[y][x].walls["bottom"]= false;
-                this.maze[y + 1][x].walls["top"]= false;
-                nY++;
-                break;
-            case "left":
-                this.maze[y][x - 1].walls["right"] = false;
-                this.maze[y][x].walls["left"] = false;
-                nX--;
-                break;
-            case "right":
-                this.maze[y][x].walls["right"] = false;
-                this.maze[y][x + 1].walls["left"] = false;
-                nX++;
-                break;
-        }
-        if(nX == x && nY == y){return;}
+
+        let directionOptions = this.AvailableDirections(chosenCell);
+        if(directionOptions.length == 0) return true;
+        let dir = RandomChoice(directionOptions); // Chooses random direction
+
+        let nX = x + Directions[dir]["deltaX"];
+        let nY = y + Directions[dir]["deltaY"];
+        
+        this.maze[y][x].walls[dir] = false;
+        this.maze[nY][nX].walls[Directions[dir]["opposite"]] = false;
+
         this.DeleteSet(this.maze[y][x].set,this.maze[nY][nX].set);
     }
-    AvailableDirections(x,y){
+    AvailableDirections(cell){
         let dirs = [];
-        if(x > 0){
-            if(this.CanBreak(x,y,x-1,y)) dirs.push("left");
-        }
-        if(x < this.width - 1){
-            if(this.CanBreak(x,y,x+1,y)) dirs.push("right");
-        }
-        if(y > 0){
-            if(this.CanBreak(x,y,x,y-1)) dirs.push("up");
-        }
-        if(y < this.height - 1){
-            if(this.CanBreak(x,y,x,y+1)) dirs.push("down");
-        }
+        cell.sides.forEach(side => {
+            if(cell.set != this.CellFromDir(cell,side).set) dirs.push(side);
+        });
         return dirs;
-    }
-    CanBreak(x,y,nX,nY){
-        return this.maze[y][x].set != this.maze[nY][nX].set
     }
     DeleteSet(keptSet,delSet){
         this.sets[delSet].forEach((element,i) => {
             element.set = keptSet;
+            this.sets[keptSet].push(element);
+            if(this.AvailableDirections(element).length == 0) element.choosable = false;
         });
-        this.sets[keptSet] = this.sets[keptSet].concat(this.sets[delSet]);
+        this.sets[keptSet].forEach((element,i) => {
+            if(this.AvailableDirections(element).length == 0) element.choosable = false;
+        });
+        //this.sets[keptSet].push(...this.sets[delSet]);
         delete this.sets[delSet];
     }
 }
-class Cell{
-    constructor(x,y,set){
-        this.x = x;
-        this.y = y;
-        this.set = set;
-        this.walls = {
-            "top": true,
-            "bottom": true,
-            "left": true,
-            "right": true
-        }
-    }
-}
+
 
 function RandomChoice(obj){
     let index = Math.random() * obj.length;
