@@ -7,12 +7,16 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <h1>Maze Generator</h1>
         <div class="controls">
-            <p>Maze Size:</p>
+            <label>Maze Width:</label>
             <input type="number" min="3" value="3" id="mazeWidthInput"></input>
-            <input type="number" min="3" value="3" id="mazeHeightInput"></input>
-            <button type="button" id="step">Generate</button>
         </div>
-        <div id="holder" width="1280" height="1280"></div>
+        <div class="controls">
+            <label>Maze Height:</label>
+            <input type="number" min="3" value="3" id="mazeHeightInput"></input>
+        </div>
+        <button type="button" id="generateBtn">Generate</button>
+        <div id="holder"></div>
     </body>
 </html>

@@ -7,7 +7,7 @@ window.onload = () => {
     holder = document.getElementById("holder");
     widthInput = document.getElementById("mazeWidthInput");
     heightInput = document.getElementById("mazeHeightInput");
-    document.getElementById("step").addEventListener("click", Generate);
+    document.getElementById("generateBtn").addEventListener("click", Generate);
 }
 
 function Generate(){

@@ -1,14 +1,11 @@
+:root{
+    font-family: monospace;
+    font-size: 20pt;
+}
 html,body{
     width: 100%;
     height: 100%;
     margin: auto;
-}
-
-body{
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 @media screen and (orientation: landscape) {
@@ -25,23 +22,13 @@ body{
     }
 }
 
-.controls{
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-}
-
 input{
     width: 50pt;
 }
+
 #holder{
-    position: relative;
-}
-svg{
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
 }
